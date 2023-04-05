@@ -60,42 +60,6 @@ class IncallManager {
         'enableProximitySensor', <String, dynamic>{'enabled': enabled});
   }
 
-  /// For Android only
-  Future<void> turnScreenOff() async {
-    await _channel.invokeMethod('turnScreenOff');
-  }
-
-  /// For Android only
-  Future<void> turnScreenOn() async {
-    await _channel.invokeMethod('turnScreenOn');
-  }
-
-  /// For Android only
-  Future<void> setMicrophoneMute(bool enabled) async {
-    await _channel.invokeMethod(
-        'setMicrophoneMute', <String, dynamic>{'enabled': enabled});
-  }
-
-  /*
-  @ringtoneUriType: BUNDLE | DEFAULT
-  @iOSCategory:'ios value playback or default
-  @ringSeconds: android only
-  */
-  Future<void> startRingtone(RingtoneUriType ringtoneUriType,
-      String iOSCategory, int ringSeconds) async {
-    try {
-      await _channel.invokeMethod('startRingtone', <String, dynamic>{
-        'ringtoneUriType': (ringtoneUriType == RingtoneUriType.BUNDLE
-            ? '_BUNDLE_'
-            : '_DEFAULT_'),
-        'ios_category': iOSCategory,
-        'seconds': ringSeconds,
-      });
-    } on PlatformException catch (e) {
-      throw 'Unable to startRingtone: ${e.message}';
-    }
-  }
-
   Future<void> stopRingtone() async {
     try {
       await _channel.invokeMethod('stopRingtone');
@@ -184,29 +148,6 @@ class IncallManager {
         bool isNear = event['isNear'];
         onProximity.add(isNear);
         break;
-      /* ----- For Android only ------ */
-      case 'NoisyAudio': //noisy audio
-        String status = event['status'];
-        print("NoisyAudio:status:$status");
-        break;
-      case 'MediaButton':
-        String eventText = event['eventText'];
-        int eventCode = event['eventCode'];
-        onMediaButton.add(eventText);
-        break;
-      case 'onAudioFocusChange':
-        String eventText = event['eventText'];
-        bool eventCode = event['eventCode'] is int
-            ? event['eventCode'] > 0
-            : event['eventCode'];
-        onAudioFocusChange.add(eventText);
-        break;
-      case 'onAudioDeviceChanged':
-        String availableAudioDeviceList = event['availableAudioDeviceList'];
-        String selectedAudioDevice = event['selectedAudioDevice'];
-        onAudioDeviceChanged.add(selectedAudioDevice);
-        break;
-      /* ----- For Android only ------ */
     }
   }
 }
